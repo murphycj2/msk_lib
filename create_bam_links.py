@@ -280,7 +280,8 @@ def get_args():
             in the --runsdir.''')
     all_parser.add_argument(
         '-e', '--exclude', action="append",
-        help='''Exclude certain projects. Can be specified more than once.''')
+        help='''Exclude certain projects. Can be specified more than
+        once. Optional.''')
     all_parser = add_common_args(all_parser)
 
     args = parser.parse_args()
