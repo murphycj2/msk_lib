@@ -109,9 +109,9 @@ def print_data_processed(data):
         print('{}  {}        {}'.format(project, stats['samples'], stats['files']))
 
 
-def create_links(args, final_sample_dirs):
+def create_links(args, projects, final_sample_dirs):
 
-    count_files_linked = {i: {'samples': 0,'files': 0} for i in args.projects}
+    count_files_linked = {i: {'samples': 0,'files': 0} for i in projects}
 
     for sample, info in final_sample_dirs.items():
 
@@ -208,7 +208,7 @@ def main():
         final_sample_dirs = get_sample_dirs(
             final_sample_dirs, path, args.sampleregex, project)
 
-    create_links(args, final_sample_dirs)
+    create_links(args, projects, final_sample_dirs)
 
 
 def add_common_args(parser):
