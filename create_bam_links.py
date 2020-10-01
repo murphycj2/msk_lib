@@ -191,7 +191,15 @@ def main():
 
     final_sample_dirs = {}
 
-    for project in args.projects:
+    if args.subparser_name == 'all':
+        projects = glob.glob(os.path.join(args.runsdir, "Project_*"))
+        projects = [os.path.split(i)[1] for i in projects]
+    else:
+        projects = args.projects
+
+    import pdb; pdb.set_trace()
+
+    for project in projects:
 
         path = os.path.join(args.runsdir, project, "bam_qc")
 
@@ -201,23 +209,8 @@ def main():
     create_links(args, final_sample_dirs)
 
 
-def get_args():
+def add_common_args(parser):
 
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        description='''
-            Creates soft links to the bam files in the runs directory.
-            Give it a list of projects to search, and it will search
-            down three directory levels within the bam_qc directory. It
-            will prioritize the \"current\" directory within the bam_qc folder.
-            If it finds the same sample directory twice then it will take
-            the most recent one.
-            ''')
-    parser.add_argument(
-        '-p', '--projects', action="append", required=True,
-        help='''
-            Project to create bam links for (e.g. Project_10747_D).
-            Can specify more than once. Required.''')
     parser.add_argument(
         '-v', '--version', required=True,
         help="Version of the BAM files (e.g. V1). Required.")
@@ -247,6 +240,46 @@ def get_args():
         help='''
             The regex pattern for finding the sample directories within
             the project folder that contain the original bam files.''')
+
+    return parser
+
+
+def get_args():
+
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        description='''
+            Creates soft links to the bam files in the runs directory.
+            Give it a list of projects to search, and it will search
+            down three directory levels within the bam_qc directory. It
+            will prioritize the \"current\" directory within the bam_qc folder.
+            If it finds the same sample directory twice then it will take
+            the most recent one.
+            ''')
+    subparsers = parser.add_subparsers(
+        help='Creat BAM file link programs.',
+        dest="subparser_name")
+
+    project_parser = subparsers.add_parser(
+        'project',
+        help='Link BAM files for one or more specific projects.')
+    project_parser.add_argument(
+        '-p', '--projects', action="append", required=True,
+        help='''
+            Project to create bam links for (e.g. Project_10747_D).
+            Can specify more than once. Required.''')
+    project_parser = add_common_args(project_parser)
+
+    all_parser = subparsers.add_parser(
+        'all',
+        help='''
+            Link BAM files for all projects simultaneously.
+            Will search for projects via 'Project_*' pattern
+            in the --runsdir.''')
+    all_parser.add_argument(
+        '-e', '--exclude', action="append",
+        help='''Exclude certain projects. Can be specified more than once.''')
+    all_parser = add_common_args(all_parser)
 
     args = parser.parse_args()
 
