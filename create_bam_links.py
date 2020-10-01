@@ -197,8 +197,6 @@ def main():
     else:
         projects = args.projects
 
-    import pdb; pdb.set_trace()
-
     for project in projects:
 
         path = os.path.join(args.runsdir, project, "bam_qc")
