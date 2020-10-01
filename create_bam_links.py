@@ -179,6 +179,19 @@ def create_links(args, projects, final_sample_dirs):
                     print('New symlink\n\tsrc: {}\n\tlink: {}'.format(fpath, dest))
 
                 if not args.dryrun:
+
+                    # check if the link is pointing to a missing file
+                    # if it is, then remove the link
+
+                    if not os.path.exists(fpath):
+                        print('WARNING - Source file for a link does not exist. Removing the dead link.\n\t src: {}\n\tlink: {}'.format(fpath, dest))
+
+                        if not os.path.islink(dest):
+                            print('Cannot remove old symlink. It is not a link: {}.'.format(dest))
+                            sys.exit(1)
+
+                        os.remove(dest)
+
                     os.symlink(fpath, dest)
 
         # create link for latest
