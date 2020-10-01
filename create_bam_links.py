@@ -182,7 +182,7 @@ def create_links(args, projects, final_sample_dirs):
                 # if it is, then remove the link
 
                 if os.path.islink(dest) and not os.path.exists(dest):
-                    print('WARNING - Source file for a link does not exist. Removing the dead link.\n\t src: {}\n\tlink: {}'.format(fpath, dest))
+                    print('WARNING - Source file for a link does not exist. Removing the dead link: {}'.format(dest))
 
                     if not args.dryrun:
                         os.remove(dest)
