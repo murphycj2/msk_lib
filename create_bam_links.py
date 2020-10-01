@@ -4,6 +4,7 @@ import os
 import glob
 import re
 import argparse
+import sys
 
 FOLDERS_EXCLUDE = [
     'QC_Results', 'log', 'picard_metrics', 'Joint_QC', 'tmp',
@@ -146,18 +147,36 @@ def create_links(args, projects, final_sample_dirs):
         for fpath in files:
             dest = os.path.join(basedir, os.path.split(fpath)[1])
 
-            if not args.overwrite and os.path.exists(dest):
-                print('File exists: {}'.format(
-                    dest))
-                continue
+            if os.path.exists(dest):
+                # if the symlink already exists, then replace it if you
+                # set the --overwrite flag
 
-            count_files_linked[project]['files'] += 1
+                if not args.overwrite:
+                    print('File exists: {}. Skipping...'.format(dest))
+                    continue
 
-            if args.dryrun or args.verbose:
-                print('New symlink\n\tsrc: {}\n\tlink: {}'.format(fpath, dest))
+                count_files_linked[project]['files'] += 1
 
-            if not args.dryrun:
-                os.symlink(fpath, dest)
+                if args.dryrun or args.verbose:
+                    print(
+                        'Replacing old symlink\n\tsrc: {}\n\tlink: {}'.format(
+                            fpath, dest))
+
+                if not args.dryrun:
+                    if not os.path.islink(dest):
+                        print('Cannot remove old symlink. It is not a link: {}.'.format(dest))
+                        sys.exit(1)
+
+                    os.remove(dest)
+                    os.symlink(fpath, dest)
+            else:
+                # create a new symlink
+
+                if args.dryrun or args.verbose:
+                    print('New symlink\n\tsrc: {}\n\tlink: {}'.format(fpath, dest))
+
+                if not args.dryrun:
+                    os.symlink(fpath, dest)
 
         # create link for latest
 
