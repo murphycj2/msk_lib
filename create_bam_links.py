@@ -164,8 +164,9 @@ def create_links(args, projects, final_sample_dirs):
 
                 if not args.dryrun:
                     if not os.path.islink(dest):
-                        # just a safety measure
-                        
+                        # just a safety measure to be sure we're removing
+                        # only symlinks
+
                         print('Cannot remove old symlink. It is not a link: {}.'.format(dest))
                         sys.exit(1)
 
