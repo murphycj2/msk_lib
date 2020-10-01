@@ -259,7 +259,7 @@ def get_args():
             the most recent one.
             ''')
     subparsers = parser.add_subparsers(
-        help='Creat BAM file link programs.',
+        help='Creates BAM/BAI file links.',
         dest="subparser_name")
 
     project_parser = subparsers.add_parser(
