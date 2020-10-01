@@ -194,6 +194,10 @@ def main():
     if args.subparser_name == 'all':
         projects = glob.glob(os.path.join(args.runsdir, "Project_*"))
         projects = [os.path.split(i)[1] for i in projects]
+
+        if args.exclude:
+            projects = list(filter(
+                lambda x: x not in args.exclude, projects))
     else:
         projects = args.projects
 
