@@ -111,7 +111,7 @@ def print_data_processed(data):
 
 def create_links(args, projects, final_sample_dirs):
 
-    count_files_linked = {i: {'samples': 0,'files': 0} for i in projects}
+    count_files_linked = {i: {'samples': 0, 'files': 0} for i in projects}
 
     for sample, info in final_sample_dirs.items():
 
@@ -178,7 +178,7 @@ def create_links(args, projects, final_sample_dirs):
                     # unexpected bugs that might remove an important
                     # directory
 
-                    os.remove(basedir_latest)
+                    os.unlink(basedir_latest)
 
                 os.symlink(basedir, basedir_latest)
 
