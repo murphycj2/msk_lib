@@ -167,7 +167,7 @@ def create_links(args, projects, final_sample_dirs):
                         # just a safety measure to be sure we're removing
                         # only symlinks
 
-                        print('Cannot remove old symlink. It is not a link: {}.'.format(dest))
+                        print('ERROR - Cannot remove old symlink. It is not a link: {}.'.format(dest))
                         sys.exit(1)
 
                     os.remove(dest)
