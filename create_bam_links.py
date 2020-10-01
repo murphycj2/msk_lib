@@ -191,6 +191,9 @@ def create_links(args, projects, final_sample_dirs):
                         os.remove(dest)
 
                 if not args.dryrun:
+
+                    count_files_linked[project]['files'] += 1
+
                     os.symlink(fpath, dest)
 
         # create link for latest
