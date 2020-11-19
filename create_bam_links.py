@@ -117,9 +117,9 @@ def print_data_processed(data):
 
     logger.info('Files and samples that were linked:')
     for project, stats in data.items():
-        logger.info('\tProject: {}'.format(project))
-        logger.info('\t\tSamples found: {}'.format(stats['samples']))
-        logger.info('\t\tFiles updated: {}'.format(stats['files']))
+        logger.info('Project: {}'.format(project))
+        logger.info('  Samples found: {}'.format(stats['samples']))
+        logger.info('  Files updated: {}'.format(stats['files']))
 
 
 def create_links(args, projects, final_sample_dirs):
