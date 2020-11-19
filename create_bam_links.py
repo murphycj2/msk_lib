@@ -115,10 +115,11 @@ def get_sample_dirs(final_sample_dirs, path, sampleregex, project):
 
 def print_data_processed(data):
 
-    print('\n\nFiles and samples that were linked')
-    print('{}          {}   {}'.format('Project', 'Samples', 'Files'))
+    logging.info('Files and samples that were linked:')
     for project, stats in data.items():
-        print('{}  {}        {}'.format(project, stats['samples'], stats['files']))
+        logging.info('\tProject: {}'.format(project))
+        logging.info('\t\tSamples found: {}'.format(stats['samples']))
+        logging.info('\t\tFiles updated: {}'.format(stats['files']))
 
 
 def create_links(args, projects, final_sample_dirs):
