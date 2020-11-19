@@ -166,7 +166,7 @@ def create_links(args, projects, final_sample_dirs):
                     # link points to
 
                     old_path = os.path.realpath(dest)
-                    if old_path != fpath:
+                    if os.stat(old_path).st_mtime < os.stat(fpath).st_mtime:
                         replace_old = True
                         logger.info(
                             'Replacing old file with: {}.'.format(fpath))
