@@ -117,7 +117,7 @@ def print_data_processed(data):
 
     logger.info('Files and samples that were linked:')
     for project, stats in data.items():
-        logger.info('Project: {}'.format(project))
+        logger.info(project)
         logger.info('  Samples found: {}'.format(stats['samples']))
         logger.info('  Files updated: {}'.format(stats['files']))
 
