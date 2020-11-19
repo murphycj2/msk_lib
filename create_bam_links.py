@@ -5,6 +5,12 @@ import glob
 import re
 import argparse
 import sys
+import logging
+
+FORMAT = '%(levelname)s - %(asctime)-15s: %(message)s'
+logging.basicConfig(format=FORMAT)
+logger = logging.getLogger("create_bam_links")
+logger.setLevel(logging.INFO)
 
 FOLDERS_EXCLUDE = [
     'QC_Results', 'log', 'picard_metrics', 'Joint_QC', 'tmp',
@@ -61,6 +67,11 @@ def list_sample_dirs(dirs, sampleregex):
 
 
 def get_sample_dirs(final_sample_dirs, path, sampleregex, project):
+    """
+    For each sample, search for the directory that contains its bam files.
+    Then return a dictionary that contains sample as the key and a list of
+    the sample's project, directory path, and directory age as the value.
+    """
 
     dirs = list_dir(path)
 
@@ -123,8 +134,8 @@ def create_links(args, projects, final_sample_dirs):
             glob.glob(os.path.join(dir, '*bai'))
 
         if len(files) == 0:
-            print('Found no bam files for sample {}. Skipping...'.format(
-                sample))
+            logger.debug(
+                'Found no bam files for sample {}. Skipping...'.format(sample))
             continue
 
         # create the base direcotory to contain the links
@@ -134,8 +145,7 @@ def create_links(args, projects, final_sample_dirs):
         basedir = os.path.join(
             os.path.abspath(args.outdir), patient_id, sample, args.version)
 
-        if args.dryrun or args.verbose:
-            print('\nCreating directory: {}'.format(basedir))
+        logger.debug('Creating directory: {}'.format(basedir))
 
         if not args.dryrun:
             os.makedirs(basedir, exist_ok=True)
@@ -148,26 +158,40 @@ def create_links(args, projects, final_sample_dirs):
             dest = os.path.join(basedir, os.path.split(fpath)[1])
 
             if os.path.exists(dest):
-                # if the symlink already exists, then replace it if you
-                # set the --overwrite flag
 
-                if not args.overwrite:
-                    print('File exists: {}. Skipping...'.format(dest))
+                replace_old = False
+
+                if args.replace_old:
+                    # determine if there is a newer file than the one the
+                    # link points to
+
+                    old_path = os.path.realpath(dest)
+                    if old_path != fpath:
+                        replace_old = True
+                        logger.info(
+                            'Replacing old file with: {}.'.format(fpath))
+
+
+                if not args.overwrite and not replace_old:
+                    # if the symlink already exists, then replace it if you
+                    # set the --overwrite flag
+
+                    logger.debug('File exists: {}. Skipping...'.format(dest))
                     continue
 
                 count_files_linked[project]['files'] += 1
 
-                if args.dryrun or args.verbose:
-                    print(
-                        'Replacing old symlink\n\tsrc: {}\n\tlink: {}'.format(
-                            fpath, dest))
+                logger.debug('Replacing old symlink')
+                logger.debug('\tsrc: {}'.format(fpath))
+                logger.debug('\tlink: {}'.format(dest))
 
                 if not args.dryrun:
                     if not os.path.islink(dest):
                         # just a safety measure to be sure we're removing
                         # only symlinks
 
-                        print('ERROR - Cannot remove old symlink. It is not a link: {}.'.format(dest))
+                        logger.error(
+                            'Cannot remove old symlink. It is not a link: {}.'.format(dest))
                         sys.exit(1)
 
                     os.remove(dest)
@@ -175,8 +199,9 @@ def create_links(args, projects, final_sample_dirs):
             else:
                 # create a new symlink
 
-                if args.dryrun or args.verbose:
-                    print('New symlink\n\tsrc: {}\n\tlink: {}'.format(fpath, dest))
+                logger.debug('Creating new symlink')
+                logger.debug('\tsrc: {}'.format(fpath))
+                logger.debug('\tlink: {}'.format(dest))
 
                 # check if the link is pointing to a missing file
                 # if it is, then remove the link
@@ -185,7 +210,9 @@ def create_links(args, projects, final_sample_dirs):
 
                     link_source = os.path.realpath(dest)
 
-                    print('WARNING - Source file for a link does not exist. Removing the dead link.\n\tmissing src: {}\n\tlink: {}'.format(link_source, dest))
+                    logger.warn('Source file for a link does not exist. Removing the dead link.')
+                    logger.warn('\tmissing src: {}'.format(link_source))
+                    logger.warn('\tlink: {}'.format(dest))
 
                     if not args.dryrun:
                         os.remove(dest)
@@ -202,11 +229,6 @@ def create_links(args, projects, final_sample_dirs):
             basedir_latest = os.path.join(
                 os.path.abspath(args.outdir), patient_id, sample, 'latest')
 
-            if args.dryrun or args.verbose:
-                print('Removing any existing latest directory')
-                print('New symlink\n\tsrc: {}\n\tlink: {}'.format(
-                    basedir, basedir_latest))
-
             if not args.dryrun:
 
                 if os.path.exists(basedir_latest) and os.path.islink(basedir_latest):
@@ -215,7 +237,15 @@ def create_links(args, projects, final_sample_dirs):
                     # unexpected bugs that might remove an important
                     # directory
 
+                    logger.debug('Removing old linked directory: {}'.format(
+                        basedir_latest))
+
                     os.unlink(basedir_latest)
+
+                logger.debug('Creating new linked directory: {}'.format(
+                    basedir_latest))
+                logger.debug('\tsrc: {}'.format(basedir))
+                logger.debug('\tlink: {}'.format(basedir_latest))
 
                 os.symlink(basedir, basedir_latest)
 
@@ -229,6 +259,7 @@ def main():
     final_sample_dirs = {}
 
     if args.subparser_name == 'all':
+
         projects = glob.glob(os.path.join(args.runsdir, "Project_*"))
         projects = [os.path.split(i)[1] for i in projects]
 
@@ -266,8 +297,11 @@ def add_common_args(parser):
         '-ov', '--overwrite', action='store_true',
         help="Overwrite any links that already exist.")
     parser.add_argument(
-        '-vb', '--verbose', action='store_true',
-        help="Print all logging info to stdout.")
+        '-ro', '--replace-old', action='store_true',
+        help="Overwrite any links that point to old files.")
+    parser.add_argument(
+        '--debug', action='store_true',
+        help="Set loging level to debug.")
     parser.add_argument(
         '-l', '--latest', action='store_true',
         help='''
@@ -322,6 +356,9 @@ def get_args():
     all_parser = add_common_args(all_parser)
 
     args = parser.parse_args()
+
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
 
     return args
 
