@@ -183,7 +183,7 @@ def create_links(args, projects, final_sample_dirs):
 
                 count_files_linked[project]['files'] += 1
 
-                logger.debug('Replacing old symlink')
+                logger.debug('Replacing old symlink.')
                 logger.debug('  src: {}'.format(fpath))
                 logger.debug('  link: {}'.format(dest))
 
@@ -201,7 +201,7 @@ def create_links(args, projects, final_sample_dirs):
             else:
                 # create a new symlink
 
-                logger.debug('Creating new symlink')
+                logger.debug('Creating new symlink.')
                 logger.debug('  src: {}'.format(fpath))
                 logger.debug('  link: {}'.format(dest))
 
@@ -244,8 +244,7 @@ def create_links(args, projects, final_sample_dirs):
 
                     os.unlink(basedir_latest)
 
-                logger.debug('Creating new linked directory: {}'.format(
-                    basedir_latest))
+                logger.debug('Creating new linked directory.')
                 logger.debug('  src: {}'.format(basedir))
                 logger.debug('  link: {}'.format(basedir_latest))
 
