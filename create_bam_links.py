@@ -208,7 +208,7 @@ def create_links(args, projects, final_sample_dirs):
                 # check if the link is pointing to a missing file
                 # if it is, then remove the link
 
-                if os.path.islink(dest) and not os.path.exists(dest):
+                if is_dead_link(dest):
 
                     link_source = os.path.realpath(dest)
 
@@ -253,6 +253,13 @@ def create_links(args, projects, final_sample_dirs):
     print_data_processed(count_files_linked)
 
 
+def is_dead_link(fpath):
+    if os.path.islink(fpath) and not os.path.exists(fpath):
+        return True
+    else:
+        return False
+
+
 def main():
 
     args = get_args()
@@ -267,7 +274,7 @@ def main():
         if args.exclude:
             projects = list(filter(
                 lambda x: x not in args.exclude, projects))
-    else:
+    elif args.subparser_name == 'project':
         projects = args.projects
 
     for project in projects:
@@ -355,6 +362,7 @@ def get_args():
         help='''Exclude certain projects. Can be specified more than
         once. Optional.''')
     all_parser = add_common_args(all_parser)
+
 
     args = parser.parse_args()
 
