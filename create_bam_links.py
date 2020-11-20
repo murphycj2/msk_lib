@@ -321,6 +321,7 @@ def add_common_args(parser):
         help='''
             The regex pattern for finding the sample directories within
             the project folder that contain the original bam files.''')
+    parser.add_argument('--log', help='File to print log to.')
 
     return parser
 
@@ -368,6 +369,11 @@ def get_args():
 
     if args.debug:
         logger.setLevel(logging.DEBUG)
+
+    if args.log:
+        fh = logging.FileHandler(args.log)
+        logger.propagate = False
+        logger.addHandler(fh)
 
     return args
 
