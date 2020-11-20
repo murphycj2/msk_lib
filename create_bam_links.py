@@ -8,7 +8,7 @@ import sys
 import logging
 
 FORMAT = '%(levelname)s - %(asctime)-15s: %(message)s'
-logging.basicConfig(format=FORMAT)
+formatter = logging.Formatter(FORMAT)
 logger = logging.getLogger("create_bam_links")
 logger.setLevel(logging.INFO)
 
@@ -367,13 +367,18 @@ def get_args():
 
     args = parser.parse_args()
 
+    logger = logging.getLogger("create_bam_links")
+
     if args.debug:
         logger.setLevel(logging.DEBUG)
 
     if args.log:
         fh = logging.FileHandler(args.log)
-        logger.propagate = False
+        fh.setFormatter(formatter)
         logger.addHandler(fh)
+    else:
+        logging.basicConfig(format=FORMAT)
+        logger = logging.getLogger("create_bam_links")
 
     return args
 
