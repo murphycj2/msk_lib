@@ -146,7 +146,7 @@ def create_links(args, projects, final_sample_dirs):
         basedir = os.path.join(
             os.path.abspath(args.outdir), patient_id, sample, args.version)
 
-        logger.info('Creating directory: {}'.format(basedir))
+        logger.debug('Creating directory: {}'.format(basedir))
 
         if not args.dryrun:
             os.makedirs(basedir, exist_ok=True)
