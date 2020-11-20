@@ -169,8 +169,9 @@ def create_links(args, projects, final_sample_dirs):
                     old_path = os.path.realpath(dest)
                     if os.stat(old_path).st_mtime < os.stat(fpath).st_mtime:
                         replace_old = True
-                        logger.info(
-                            'Replacing old file with: {}.'.format(fpath))
+                        logger.info('Replacing old file.'))
+                        logger.info('  Old file: {}'.format(old_path))
+                        logger.info('  New file: {}'.format(fpath))
 
 
                 if not args.overwrite and not replace_old:
