@@ -184,8 +184,8 @@ def create_links(args, projects, final_sample_dirs):
                 count_files_linked[project]['files'] += 1
 
                 logger.debug('Replacing old symlink')
-                logger.debug('\tsrc: {}'.format(fpath))
-                logger.debug('\tlink: {}'.format(dest))
+                logger.debug('  src: {}'.format(fpath))
+                logger.debug('  link: {}'.format(dest))
 
                 if not args.dryrun:
                     if not os.path.islink(dest):
@@ -202,8 +202,8 @@ def create_links(args, projects, final_sample_dirs):
                 # create a new symlink
 
                 logger.debug('Creating new symlink')
-                logger.debug('\tsrc: {}'.format(fpath))
-                logger.debug('\tlink: {}'.format(dest))
+                logger.debug('  src: {}'.format(fpath))
+                logger.debug('  link: {}'.format(dest))
 
                 # check if the link is pointing to a missing file
                 # if it is, then remove the link
@@ -213,8 +213,8 @@ def create_links(args, projects, final_sample_dirs):
                     link_source = os.path.realpath(dest)
 
                     logger.warn('Source file for a link does not exist. Removing the dead link.')
-                    logger.warn('\tmissing src: {}'.format(link_source))
-                    logger.warn('\tlink: {}'.format(dest))
+                    logger.warn('  missing src: {}'.format(link_source))
+                    logger.warn('  link: {}'.format(dest))
 
                     if not args.dryrun:
                         os.remove(dest)
@@ -246,8 +246,8 @@ def create_links(args, projects, final_sample_dirs):
 
                 logger.debug('Creating new linked directory: {}'.format(
                     basedir_latest))
-                logger.debug('\tsrc: {}'.format(basedir))
-                logger.debug('\tlink: {}'.format(basedir_latest))
+                logger.debug('  src: {}'.format(basedir))
+                logger.debug('  link: {}'.format(basedir_latest))
 
                 os.symlink(basedir, basedir_latest)
 
