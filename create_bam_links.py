@@ -135,7 +135,7 @@ def create_links(args, projects, final_sample_dirs):
             glob.glob(os.path.join(dir, '*bai'))
 
         if len(files) == 0:
-            logger.debug(
+            logger.warn(
                 'Found no bam files for sample {}. Skipping...'.format(sample))
             continue
 
@@ -146,7 +146,7 @@ def create_links(args, projects, final_sample_dirs):
         basedir = os.path.join(
             os.path.abspath(args.outdir), patient_id, sample, args.version)
 
-        logger.debug('Creating directory: {}'.format(basedir))
+        logger.info('Creating directory: {}'.format(basedir))
 
         if not args.dryrun:
             os.makedirs(basedir, exist_ok=True)
@@ -169,7 +169,7 @@ def create_links(args, projects, final_sample_dirs):
                     old_path = os.path.realpath(dest)
                     if os.stat(old_path).st_mtime < os.stat(fpath).st_mtime:
                         replace_old = True
-                        logger.info('Replacing old file.')
+                        logger.info('Replacing old file with newer one.')
                         logger.info('  Old file: {}'.format(old_path))
                         logger.info('  New file: {}'.format(fpath))
 
@@ -201,9 +201,9 @@ def create_links(args, projects, final_sample_dirs):
             else:
                 # create a new symlink
 
-                logger.debug('Creating new symlink.')
-                logger.debug('  src: {}'.format(fpath))
-                logger.debug('  link: {}'.format(dest))
+                logger.info('Creating new symlink.')
+                logger.info('  src: {}'.format(fpath))
+                logger.info('  link: {}'.format(dest))
 
                 # check if the link is pointing to a missing file
                 # if it is, then remove the link
