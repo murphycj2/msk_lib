@@ -148,8 +148,10 @@ def create_links(args, projects, final_sample_dirs):
         if 'Sample_' in patient_id:
             patient_id = patient_id.replace('Sample_', '')
 
+        sample_dir = sample.replace('Sample_', '')
+
         basedir = os.path.join(
-            os.path.abspath(args.outdir), patient_id, sample, args.version)
+            os.path.abspath(args.outdir), patient_id, sample_dir, args.version)
 
         logger.debug('Creating directory: {}'.format(basedir))
 
@@ -234,7 +236,7 @@ def create_links(args, projects, final_sample_dirs):
 
         if args.latest:
             basedir_latest = os.path.join(
-                os.path.abspath(args.outdir), patient_id, sample, 'latest')
+                os.path.abspath(args.outdir), patient_id, sample_dir, 'latest')
 
             if not args.dryrun:
 
