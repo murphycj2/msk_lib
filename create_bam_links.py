@@ -143,6 +143,11 @@ def create_links(args, projects, final_sample_dirs):
 
         patient_id = '-'.join(sample.split('-')[0:2])
 
+        # some samples have a Sample_ prefix, so remove it
+
+        if 'Sample_' in patient_id:
+            patient_id = patient_id.replace('Sample_', '')
+
         basedir = os.path.join(
             os.path.abspath(args.outdir), patient_id, sample, args.version)
 
