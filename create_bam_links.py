@@ -135,7 +135,7 @@ def create_links(args, projects, final_sample_dirs):
             glob.glob(os.path.join(dir, '*bai'))
 
         if len(files) == 0:
-            logger.warn(
+            logger.warning(
                 'Found no bam files for sample {}. Skipping...'.format(sample))
             continue
 
@@ -219,9 +219,9 @@ def create_links(args, projects, final_sample_dirs):
 
                     link_source = os.path.realpath(dest)
 
-                    logger.warn('Source file for a link does not exist. Removing the dead link.')
-                    logger.warn('  missing src: {}'.format(link_source))
-                    logger.warn('  link: {}'.format(dest))
+                    logger.warning('Source file for a link does not exist. Removing the dead link.')
+                    logger.warning('  missing src: {}'.format(link_source))
+                    logger.warning('  link: {}'.format(dest))
 
                     if not args.dryrun:
                         os.remove(dest)
